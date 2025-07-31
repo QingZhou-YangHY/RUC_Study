@@ -16,6 +16,7 @@ Incentivizing Reasoning Capability in LLMs via Reinforcement Learning
 无监督预训练
 MoE（Mixture of Experts，混合专家）架构
 总参数量：145B，但 激活参数量仅 20B/Token
+主要是他做强化学习的过程，通过强化学习来提升模型的推理能力
 
 ## COT
 #### Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
@@ -31,7 +32,7 @@ Cursor,Claude这些收费的暂时不说，code也不用
 
 vllm: https://zhuanlan.zhihu.com/p/694138714
 
-PHD の Paper(暂时没看):
+PHD:
 
 如果要做的话，极有可能:复杂推理相关任务，具体来说就是让大模型解决数学题和其他各学科的竞赛题  
 
