@@ -48,27 +48,41 @@ a和$\hat{a}$ 的Cross-entropy在后面简记为e
 每一个行为的好坏程度简记为$A_i$,$A_i$的正负代表是否期望他发生，绝对值代表希望程度
 ==猜测:在探索过程中,这里是不是可以把$A_i$变成一个超参数来进行动态学习?==
 ![control_actor_4](..\images\basic_theroy\control_actor_4.png "control_actor_4")
-每一个action都会影响后面的rewards.Reward delay:有时候需要牺牲现在的reward来获得long-term reward
+
+
+怎么定义A?
+## Version 0(不正确的版本)
+![version_0](..\images\basic_theroy\version_0.png "version_0")
+收集训练资料Training Data,通常是many episodes为了收集到足够多的资料.每一对{$s_i$,$a_i$}是{observation,action}.$A_i$ = $r_i$
+很明显这是一个Short-sighted Version,因为每一个行为不是独立的,每一个行为action都会影响到接下来发生的事情.而且会有Reward delay:有时候需要牺牲现在的reward来获得long-term reward.这个是很符合人类认知的.所以这个version是不正确的,记录在这里的原因是为了学习一下改进这个思路.
+但是这个implement RL的时候特别容易犯这个错误!
+
 
 ## Version 1
+![version_1](..\images\basic_theroy\version_1.png "version_1")
 G1 = r1 + r2 + r3 + ... + rN 来评估a1的好坏    G2 = r2 + r3 + ... + rN 来评估a2的好坏 ......
 G:cumulated reward
 Version 1的问题在于可能会抢功劳！
+但我感觉这个方法的思路起点是好的，这样可以找到是因为前面发生了xx所以才导致了xx，可能是式子表达的不对或者说缺少了一个判断，没有一个东西来忽略哪些不重要哪些重要.
+
 
 ## Version 2 
+![version_2](..\images\basic_theroy\version_2.png "version_2")
 Discout facctor γ < 1   G1' = r1 + γr2 + γ2r3 + ...  距离越远γ平方越多
 A1 = G1' A2 = G2' ......   
-到这里已经合理多了
+到这里已经合理多了,但是感觉还是不可以.他没有真正识别出来，只是表达出如果步数差得多，那么他一定就没关系.显然有很多问题
 
-不同的RL方法是在A上面下文章
+==不同的RL方法是在A上面下文章，可能我也是很容易这么去想着来改进==
 
 ## Version 3
+![version_3](..\images\basic_theroy\version_3.png "version_3")
 Good or bad reward is "relative"
 If all the rn >= 10   rn = 10 is negative...   reward是相对的  
-我们需要做标准化 所有的G' 减去b    B:baseline
-如何设定 baseline b ?
+我们需要做标准化 所有的G' 减去b    B叫baseline
+如何设定 baseline b ?在接下来的版本会提到
 
-## Policy Gradient
+## Policy Gradient是怎么操作的?
+![PolicyGradient_1](..\images\basic_theroy\PolicyGradient_1.png "PolicyGradient_1")
 Initialize actor network parameters θ0
 For training iteration i = 1 to T
  Using actor θi-1 to interact
@@ -76,24 +90,63 @@ For training iteration i = 1 to T
   Compute A1,A2,..,AN  (这里面一定要改)
   Compute loss L
   θi = θi-1 - η * grad(L)  和gradient descent是一样的
+![PolicyGradient_2](..\images\basic_theroy\PolicyGradient_2.png "PolicyGradient_2")
 一般的training data collection 都是在training 之外的，但是RL的data collection是在training循环里面的,所以非常费时间
-同一个Action对于不同的Actor的作用效果是不一样的,所以上面的资料只能训练θi-1，不能训练θi.因此就需要不断更新data. e.g.棋魂中大马步飞和小马步飞 
+同一个Action对于不同的Actor的作用效果是不一样的,所以上面的资料只能训练θi-1，不能训练θi.因此就需要不断更新data. e.g.棋魂中大马步飞和小马步飞
+![PolicyGradient_3](..\images\basic_theroy\PolicyGradient_3.png "PolicyGradient_3") 
+![PolicyGradient_4](..\images\basic_theroy\PolicyGradient_4.png "PolicyGradient_4") 
+==但我觉得可以改进吧，万一偶然在之前发现了很好的action没有利用上呢?这样就会特别死板，不能挖掘天赋，太循规蹈矩了==
+==虽然听起来action很容易乱,但是做成了可能就比较开创性吧==
+==或者说可以先根据一个资料用几次然后再更新.这样能让他把经验总结全==
 
-上面的是On-policy:train和interact的Actor是同一个    Off-policy:要训练的Actor 和 与环境互动的Actor是两个.这样就不用在每个epoch收集资料了. 经典的做法Proximal Policy Optimization(PPO).重点是train的Actor要知道自己和interact的Actor的difference.interact的actor的行为有些可以采纳,有些不行
+上面的是On-policy:train和interact的Actor是同一个    Off-policy:要训练的Actor 和 与环境互动的Actor是两个.这样就不用在每个epoch收集资料了. 
+![PolicyGradient_5](..\images\basic_theroy\PolicyGradient_5.png "PolicyGradient_5") 
+
+经典的Off-policy做法Proximal Policy Optimization(PPO).重点是train的Actor要知道自己和interact的Actor的difference.interact的actor的行为有些可以采纳,有些不行
+==一些具体的做法影片希望有时间可以看看学习一下==
+![PolicyGradient_6](..\images\basic_theroy\PolicyGradient_6.png "PolicyGradient_6") 
+
 
 Exploration(训练过程中非常重要的技巧)：data collection里面具有随机性(随机性十分重要). e.g.Enlarge output entropy  Add noises onto parameters.
+![PolicyGradient_7](..\images\basic_theroy\PolicyGradient_7.png "PolicyGradient_7") 
+==所以我们可以在这里集群学习?就是上面的变形?好多个Actor共同学习，只不过是在前面的Action不同,所以导致后面的结果不一样.但是这样不用担心"因为一开始的选择导致了速度很慢/无法学明白"这样的问题==
 
-DeepMind - PPO (和OpenAI同时提出)
-应用于一些机器人.
+DeepMind - PPO (和OpenAI同时提出)应用于一些机器人.
+
+## Critic
+Critic: Given actor θ,how good it is when observing s (and taking action a).看到某一个游戏画面，预测将来可能会得到的reward
+一种Critic:Value function $V^{θ}(s)$: When using actor θ,the discounted cumulated reward expects to be obtained after seeing s.输入是s,通过$V^{θ}(s)$输出一个scalar(数值),这个scalar是the discounted cumulated reward即Version 2中的式子$G_{i}'$
+Value function的数值和观察的actor有关系,根据自己水平(参数θ)进行猜测.对某一个actor来说，看到某一个游戏画面预测接下来得到的the discounted cumulated reward.(未卜先知)
+
+Critic是如何被训练出来的?
+
+- Monte-Carlo(MC) based approach:玩了很多场游戏.看到s就知道$V^{θ}(s)$了.
+![MC](..\images\basic_theroy\MC.png "MC") 
+- Temporal-differnce(TD) approach:不用玩完正常游戏,只需要上下一点就可以更新Vθ的参数.
+![TD](..\images\basic_theroy\TD.png "TD")
+MC表示了前后有影响,TD似乎可以减少sample造成的影响
+![MCvsTD](..\images\basic_theroy\MCvsTD.png "MCvsTD")  
 
 
-Critic: Given actor θ,how good it is when observing s (and taking action a)
-Value function Vθ(s): When using actor θ,the discounted cumulated reward expects to be obtained after seeing s
-Value function的数值和观察的actor有关系.
-Monte-Carlo(MC) based approach:玩了很多场游戏.看到s就知道Vθ了
-Temporal-differnce(TD) approach:不用玩完正常游戏,只需要上下一点就可以更新Vθ的参数.
+Critic如何应用在RL?
 
-##  Version 4
+## Version 3.5
+确定了$b$是$V^{θ}(s_{i})$
+![version_3.5_1](..\images\basic_theroy\version_3.5_1.png "version_3.5_1")
+为什么$b$是$V^{θ}(s_{i})$?
+不知道可能会采取什么动作，所以先给一个平均值，也就是$V^{θ}(s_{i})$
+![version_3.5_2](..\images\basic_theroy\version_3.5_2.png "version_3.5_2")
+
+上面把随机出来的action的reward当成$G_{t}'$真的好吗?引出了version 4
+## Version 4
 Advantage Actor-Critic
+![version_4](..\images\basic_theroy\version_4.png "version_4")
+小tip:可以共用一些参数
+![tip_of_actor-critic](..\images\basic_theroy\tip_of_actor-critic.png "tip_of_actor-critic")
+
+## Outlook:Deep Q Network(DQN) 
+直接用Critic就决定用什么action
+==Rainbow用了七种变形,有许多录音课程可以看==
+![Outlook_DQN](..\images\basic_theroy\Outlook_DQN.png "Outlook_DQN")
 
 # RL很吃运气,很看sample的怎么样
