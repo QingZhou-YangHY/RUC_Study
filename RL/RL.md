@@ -150,3 +150,30 @@ Advantage Actor-Critic
 ![Outlook_DQN](..\images\basic_theroy\Outlook_DQN.png "Outlook_DQN")
 
 # RL很吃运气,很看sample的怎么样
+
+## Reward Shaping
+==可能这里是我们要研究，做出改变的==
+
+如果我们不知道actions是不是好的(reward基本上都是0),类似于下围棋问题,我们该如何解决?
+想办法提供额外的reward引导agent去学习,这个叫reward shaping.
+e.g.曹操望梅止渴
+![SparseReward](..\images\basic_theroy\SparseReward.png "SparseReward")
+用RL玩VizDoom
+,当时第一名就用了Reward Shaping.可以自己定义一些加分扣分的规则.需要一些我们对问题的一些理解.感觉要是有些问题让他自己学习这个方法有很大局限性.
+Reward Shaping - Curiosity
+看到有意义的新东西就会加分.但是要克服无意义的新.出自2017年ICML的文章.
+
+## No Reward:Learning from Demonstration
+在一些任务里面才有reward,但是很多任务是没有reward的.比如自动驾驶.
+机器会有神逻辑,所以有时候会意想不到发生什么...这里面非常能体现他很蠢...所以提出的解决办法其中之一就是limitation Learning
+没有reward,但是有demonstration(通常是人类的).有点像Supervised Learning.这确实是,同时也也叫Behavior Cloning.但是会产生问题:人类和机器观察到的s是不一样的.所以有的地方他是不知道怎么处理了.内涵某自动驾驶(.除此之外,有些个人的特征不需要模仿的他也学习了,只会完全复制老师行为.
+
+Inverse Reinforcement Learning(IRL)
+让机器自己定reward
+![IRL](..\images\basic_theroy\IRL.png "IRL")
+![IRL_theroy](..\images\basic_theroy\IRL_theroy.png "IRL_theroy")
+![IRL_picture](..\images\basic_theroy\IRL_picture.png "IRL_picture")
+GAN和IRL本质上是同一种思想
+![GANvsIRL](..\images\basic_theroy\GANvsIRL.png "GANvsIRL")
+IRL常常训练机械手臂
+更潮的做法:给他画面让他学习
