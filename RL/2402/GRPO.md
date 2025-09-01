@@ -37,9 +37,10 @@ q 和 o 是从问题数据集和旧策略 πθ_old​​ 中采样的问题和�
 超参数 ϵ 用于稳定训练过程。
 一个流行但未经验证的假设是：**代码训练可以提高推理能力。**
 
+## 易错点
+GRPO最开始是在deepseek-math那里提出来的，那里GRPO用的还是神经网络的奖励模型。在R1的那里，才把推理数据的奖励换成了基于规则的。
+
 ## 流程
-
-
 
 ![PPOvsGRPO](../../images/paper_images/PPOvsGRPO.png "PPOvsGRPO")
 GRPO相比于PPo少用了reward model和value model.
