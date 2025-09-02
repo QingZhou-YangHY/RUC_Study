@@ -9,8 +9,19 @@
 
 ---
 
+## online/offline & on-policy/off-policy
+
+**online/offline是从能否和环境交互来说的，on-policy和off-policy是算法利用的是不是当前这个策略的数据来评价自己**。因此，offline一定得用off-policy的数据，因为offline dataset肯定不是当前这个策略采的。online用on-policy和off-policy都可以，但是off-policy样本效率高很多，同时也更不容易训练。
+
+不容易训练的原因:offpolicy会有distribution shift，而且Q容易过估计。
+
+---
+
 ## On-policy & Off-policy
 [强化学习中的奇怪概念(一)——On-policy与off-policy](https://zhuanlan.zhihu.com/p/346433931)👈
+
+> 结论:onpolicy收敛更快，offpolicy更稳准
+
 ## On-policy
 ##### the target and the behavior polices are the same
 行为策略与目标策略相同,SARSA算法即为典型的on-policy的算法
@@ -44,7 +55,7 @@ $Q_{t+1}(s, a) = Q_{t}(s, a) + \alpha · (R(s,a) + \gamma ·Q_{t}(s', a') - Q_{t
 > 为了让方差更小，如果很稳定的话当然不需要！
 
 - Q-Learning算法(或DQN)身为off-policy可以不用重要性采样
-
+- Off-policy方法中不一定非要采用重要性采样，要根据实际情况采用（比如，需要精确估计值函数时需要采用重要性采样；若是用于使值函数靠近最优值函数则不一定）。
 
 将收集数据当做一个单独的任务
 数据来源于一个单独的用于探索的策略(不是最终要求的策略)
