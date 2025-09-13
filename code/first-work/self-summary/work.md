@@ -37,3 +37,22 @@ VERL 会算出 Pass@1 和 Pass@k。
 ---
 ### 闲来无事？
 可以follow dapo那个工作的数据https://huggingface.co/datasets/BytedTsinghua-SIA/DAPO-Math-17k，模型的话用个1.5b的应该就行了
+
+---
+
+### 之前开会说的
+
+1.看点啥
+知乎 **训练数据**  **评测的benchmark**
+2.重点
+方法 局限性  定理公式大致的样子 大模型＋rl
+3.工作
+
+迷宫任务(不用考虑数据)
+verl框架
+
+
+
+他人的证明+lean语言+数据+benchmark(别人的)
+
+
